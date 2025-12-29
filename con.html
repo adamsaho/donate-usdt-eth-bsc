@@ -16,7 +16,9 @@
   <button class="start" onclick="startLoop()">Start Loop</button>
   <button class="stop" onclick="stopLoop()">Stop Loop</button>
   <br>
-  enter window open duration (ms)<input type="number" value="1000" placeholder="window open duration." id="openWindowDuration"/>
+
+    enter window open duration (ms)<input type="number" value="1000" placeholder="window open duration." id="openWindowDuration">
+
 
   <script>
     let popupWindow = null;
@@ -37,17 +39,18 @@
         if (popupWindow && !popupWindow.closed) {
           popupWindow.close();
         }
-
-        // Wait 1 second before reopening (optional delay)
-        setTimeout(cycle, document.querySelector('#openWindowDuration').value.trim());
-
       }, 10000);
     }
 
-    function startLoop() {
+    async function startLoop() {
       if (running) return;
       running = true;
-      cycle();
+      
+      while (running) {
+        cycle();
+        await new Promise(resolve => setTimeout(resolve, Number(document.querySelector('#openWindowDuration').value.trim()))); 
+      }
+
     }
 
     function stopLoop() {
