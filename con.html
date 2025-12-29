@@ -17,47 +17,37 @@
   <button class="stop" onclick="stopLoop()">Stop Loop</button>
   <br>
 
-    enter window open duration (ms)<input type="number" value="1000" placeholder="window open duration." id="openWindowDuration">
+   enter intervalid (ms)<input type="number" value="10000" placeholder="window interval." id="intervalDuration">
+    enter window open duration (ms)<input type="number" value="10000" placeholder="window open duration." id="openWindowDuration">
 
 
-  <script>
-    let popupWindow = null;
-    let running = false;
+<script>
+  let intervalId = null;
 
-    function cycle() {
-      if (!running) return;
+  function startLoop() {
+    if (intervalId) return; // already running
 
-      // Open the window
-      popupWindow = window.open(
+    intervalId = setInterval(() => {
+      const win = window.open(
         "https://adamsaho.github.io/monetag-test/",
-        "myWindow",
+        "_blank",
         "width=900,height=600"
       );
 
-      // Close after 10 seconds, then repeat
+      // close THIS window after 10 seconds
       setTimeout(() => {
-        if (popupWindow && !popupWindow.closed) {
-          popupWindow.close();
-        }
-      }, 10000);
-    }
+        if (win && !win.closed) win.close();
+      }, Number(document.querySelector('#openWindowDuration').value.trim()));
 
-    async function startLoop() {
-      if (running) return;
-      running = true;
-      
-      while (running) {
-        cycle();
-        await new Promise(resolve => setTimeout(resolve, Number(document.querySelector('#openWindowDuration').value.trim()))); 
-      }
+    }, Number(document.querySelector('#intervalDuration').value.trim()));
 
-    }
+  }
 
-    function stopLoop() {
-      running = false;
-      if (popupWindow && !popupWindow.closed) popupWindow.close();
-    }
-  </script>
+  function stopLoop() {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+</script>
 
 </body>
 </html>
