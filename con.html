@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auto Open & Close Loop</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; display: flex; gap: 10px; }
+    button { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; }
+    .start { background:#4caf50; color:white; }
+    .stop  { background:#f44336; color:white; }
+  </style>
+</head>
+
+<body>
+
+  <button class="start" onclick="startLoop()">Start Loop</button>
+  <button class="stop" onclick="stopLoop()">Stop Loop</button>
+  <br>
+  enter window open duration (ms)<input type="number" value="1000" placeholder="window open duration." id="openWindowDuration"/>
+
+  <script>
+    let popupWindow = null;
+    let running = false;
+
+    function cycle() {
+      if (!running) return;
+
+      // Open the window
+      popupWindow = window.open(
+        "https://adamsaho.github.io/monetag-test/",
+        "myWindow",
+        "width=900,height=600"
+      );
+
+      // Close after 10 seconds, then repeat
+      setTimeout(() => {
+        if (popupWindow && !popupWindow.closed) {
+          popupWindow.close();
+        }
+
+        // Wait 1 second before reopening (optional delay)
+        setTimeout(cycle, document.querySelector('#openWindowDuration').value.trim());
+
+      }, 10000);
+    }
+
+    function startLoop() {
+      if (running) return;
+      running = true;
+      cycle();
+    }
+
+    function stopLoop() {
+      running = false;
+      if (popupWindow && !popupWindow.closed) popupWindow.close();
+    }
+  </script>
+
+</body>
+</html>
